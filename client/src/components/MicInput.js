@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
 
+// This line makes the component work in both development and production.
+// On Render, it will use the URL you set in the Environment Variables.
+// On your local machine, it will fall back to localhost:5000.
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
 export default function MicInput({ setResponse }) {
   const [transcript, setTranscript] = useState("");
   const [isListening, setIsListening] = useState(false);
@@ -9,7 +14,6 @@ export default function MicInput({ setResponse }) {
     diabetes: false, hypertension: false, asthma: false, cancer: false, heart: false,
   });
 
-  // --- NEW STATE for Patient Management ---
   const [patients, setPatients] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState("");
   const [newPatientName, setNewPatientName] = useState("");
@@ -23,7 +27,7 @@ export default function MicInput({ setResponse }) {
 
   const fetchPatients = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/patients");
+      const res = await fetch(`${API_URL}/api/patients`);
       const data = await res.json();
       setPatients(data);
     } catch (error) {
@@ -41,12 +45,12 @@ export default function MicInput({ setResponse }) {
     formData.append("historyFile", historyFile);
 
     try {
-      const res = await fetch("http://localhost:5000/api/patients/upload", { method: "POST", body: formData });
+      const res = await fetch(`${API_URL}/api/patients/upload`, { method: "POST", body: formData });
       if (res.ok) {
         alert("Patient history uploaded successfully!");
         setNewPatientName("");
         setHistoryFile(null);
-        document.getElementById('history-file-input').value = null; // Clear file input
+        document.getElementById('history-file-input').value = null;
         fetchPatients();
       } else {
         const err = await res.json();
@@ -81,7 +85,7 @@ export default function MicInput({ setResponse }) {
       return;
     }
     setIsLoading(true);
-    setResponse(""); // Clear previous response
+    setResponse("");
     
     const promptData = {
       language,
@@ -91,7 +95,7 @@ export default function MicInput({ setResponse }) {
     };
 
     try {
-      const res = await fetch("http://localhost:5000/api/interpret", {
+      const res = await fetch(`${API_URL}/api/interpret`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ promptData, patientId: selectedPatient }),
