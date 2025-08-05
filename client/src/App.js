@@ -4,16 +4,18 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import jsPDF from "jspdf";
 import './App.css';
 
-
-
 export default function App() {
   const [response, setResponse] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true); // <-- NEW: Add a loading state
 
-  // Auto-login if previously authenticated
+  // This effect now checks for authentication and then sets loading to false
   useEffect(() => {
     const auth = localStorage.getItem("auth");
-    if (auth === "true") setIsLoggedIn(true);
+    if (auth === "true") {
+      setIsLoggedIn(true);
+    }
+    setIsLoading(false); // <-- NEW: Stop loading after checking
   }, []);
 
   const handleLogin = () => {
@@ -29,7 +31,7 @@ export default function App() {
   const handleLogout = () => {
     localStorage.removeItem("auth");
     setIsLoggedIn(false);
-  }; 
+  };
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(response);
@@ -60,6 +62,12 @@ export default function App() {
     ));
   };
 
+  // --- NEW: Render a blank or loading screen until the auth check is complete ---
+  if (isLoading) {
+    return null; // or you can return a spinner <div>Loading...</div>
+  }
+
+  // If not loading and not logged in, show the login page
   if (!isLoggedIn) {
     return (
       <div className="container text-center py-5">
@@ -71,6 +79,7 @@ export default function App() {
     );
   }
 
+  // If not loading and logged in, show the main app
   return (
     <div className="container py-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -98,11 +107,6 @@ export default function App() {
           </button>
         </div>
       </div>
-      <footer>
-        <br></br>
-        <br></br>
-      <p>&copy; {new Date().getFullYear() } Hussein Bayoun. All rights reserved.</p>
-      </footer>
     </div>
   );
 }
