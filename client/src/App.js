@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react"; // Removed useEffect
 import MicInput from "./components/MicInput";
 import "bootstrap/dist/css/bootstrap.min.css";
 import jsPDF from "jspdf";
@@ -6,22 +6,15 @@ import './App.css';
 
 export default function App() {
   const [response, setResponse] = useState("");
+  // The app ALWAYS starts in a logged-out state.
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // <-- NEW: Add a loading state
 
-  // This effect now checks for authentication and then sets loading to false
-  useEffect(() => {
-    const auth = localStorage.getItem("auth");
-    if (auth === "true") {
-      setIsLoggedIn(true);
-    }
-    setIsLoading(false); // <-- NEW: Stop loading after checking
-  }, []);
+  // NOTE: The useEffect and isLoading state have been completely removed.
 
   const handleLogin = () => {
     const input = prompt("Enter doctor password:");
     if (input === "med123") {
-      localStorage.setItem("auth", "true");
+      // We no longer use localStorage for this simplified version.
       setIsLoggedIn(true);
     } else {
       alert(" Incorrect password.");
@@ -29,7 +22,6 @@ export default function App() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("auth");
     setIsLoggedIn(false);
   };
 
@@ -62,12 +54,7 @@ export default function App() {
     ));
   };
 
-  // --- NEW: Render a blank or loading screen until the auth check is complete ---
-  if (isLoading) {
-    return null; // or you can return a spinner <div>Loading...</div>
-  }
-
-  // If not loading and not logged in, show the login page
+  // The app will always show this login page first. No exceptions.
   if (!isLoggedIn) {
     return (
       <div className="container text-center py-5">
@@ -79,7 +66,7 @@ export default function App() {
     );
   }
 
-  // If not loading and logged in, show the main app
+  // Only after a successful login will this main app view be rendered.
   return (
     <div className="container py-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
