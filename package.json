@@ -1,6 +1,15 @@
 {
-  "dependencies": {
-    "react-tsparticles": "^2.12.2",
-    "tsparticles": "^3.8.1"
+  "name": "speakrx-app",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "server": "npm run dev --prefix server",
+    "client": "npm start --prefix client",
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "build": "npm run build --prefix client",
+    "postinstall": "npm install --prefix server && npm install --prefix client"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
   }
 }

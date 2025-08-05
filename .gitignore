@@ -1,0 +1,13 @@
+# System files
+.DS_Store
+
+# Node modules folder at the root (if any)
+node_modules
+
+# React build output
+client/build
+
+# Logs
+logs
+*.log
+npm-debug.log*

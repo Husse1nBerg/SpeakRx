@@ -1,0 +1,9 @@
+# Server-specific node modules
+node_modules
+
+# Environment file with all your secrets.
+# THIS IS THE MOST IMPORTANT LINE.
+.env
+
+# Log files
+*.log
