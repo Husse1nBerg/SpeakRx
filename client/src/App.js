@@ -1,4 +1,4 @@
-import React, { useState } from "react"; // Removed useEffect
+import React, { useState } from "react";
 import MicInput from "./components/MicInput";
 import "bootstrap/dist/css/bootstrap.min.css";
 import jsPDF from "jspdf";
@@ -6,23 +6,11 @@ import './App.css';
 
 export default function App() {
   const [response, setResponse] = useState("");
-  // The app ALWAYS starts in a logged-out state.
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  // NOTE: The useEffect and isLoading state have been completely removed.
-
-  const handleLogin = () => {
-    const input = prompt("Enter doctor password:");
-    if (input === "med123") {
-      // We no longer use localStorage for this simplified version.
-      setIsLoggedIn(true);
-    } else {
-      alert(" Incorrect password.");
-    }
-  };
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
+    localStorage.removeItem("auth");
+    // Reload the page. The app will now detect the user is logged out.
+    window.location.reload();
   };
 
   const copyToClipboard = () => {
@@ -54,19 +42,6 @@ export default function App() {
     ));
   };
 
-  // The app will always show this login page first. No exceptions.
-  if (!isLoggedIn) {
-    return (
-      <div className="container text-center py-5">
-        <h2> Doctor Login</h2>
-        <button className="btn btn-primary mt-3" onClick={handleLogin}>
-          Login
-        </button>
-      </div>
-    );
-  }
-
-  // Only after a successful login will this main app view be rendered.
   return (
     <div className="container py-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
