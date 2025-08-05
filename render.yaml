@@ -1,0 +1,40 @@
+# render.yaml
+# This is the master instruction manual for deploying the SpeakRx application on Render.
+
+services:
+  # 1. The PostgreSQL Database
+  - type: psql
+    name: speakrx-database
+    plan: free
+
+  # 2. The Node.js Backend Server
+  - type: web
+    name: speakrx-server
+    env: node
+    plan: free
+    rootDir: server
+    buildCommand: "npm ci"
+    startCommand: "npm start"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: speakrx-database
+          property: connectionString
+      - key: NODE_VERSION
+        value: 18
+      # IMPORTANT: Your OpenAI key is still set securely in the Render Dashboard's Environment tab.
+      # The 'sync: false' below prevents its value from being exposed here.
+      - key: OPENAI_API_KEY
+        sync: false
+
+  # 3. The React Frontend Static Site
+  - type: static
+    name: speakrx
+    rootDir: client
+    buildCommand: "npm run build"
+    publishDir: build
+    # The crucial rewrite rule to connect frontend to backend
+    routes:
+      - type: rewrite
+        source: /api/(.*)
+        destination: https://speakrx-server.onrender.com/api/$1
